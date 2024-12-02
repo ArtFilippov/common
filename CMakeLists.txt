@@ -15,9 +15,9 @@ endif()
 
 project(COMMON CXX)
 
-set(tool_dest "bin")
-set(include_dest "include/common")
-set(main_lib_dest "lib/common")
+set(include_dest "common")
+set(main_lib_dest "common/lib/common")
+
 
 install(FILES common-config.cmake DESTINATION ${main_lib_dest})
 install(EXPORT common DESTINATION "${main_lib_dest}")
