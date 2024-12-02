@@ -5,9 +5,13 @@
 
 namespace common {
 int writeAll(int fd, uint8_t *buf, int len);
+
 int readAll(int fd, uint8_t *buf, int len);
+
 int readUntil(int fd, uint8_t *buf, int len, uint64_t time);
+
 std::stringstream print(uint8_t *pac, int len);
+
 uint64_t timeMs();
 
 template <typename Int> void setBigEndian(uint8_t *pac, Int x) {
