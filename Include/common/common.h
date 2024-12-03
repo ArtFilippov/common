@@ -8,6 +8,7 @@ int writeAll(int fd, uint8_t *buf, int len);
 
 int readAll(int fd, uint8_t *buf, int len);
 
+// NOTE: работает только на неблокирующих дескрипторах
 int readUntil(int fd, uint8_t *buf, int len, uint64_t time);
 
 std::stringstream print(uint8_t *pac, int len);
