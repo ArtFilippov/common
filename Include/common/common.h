@@ -1,9 +1,14 @@
 #pragma once
+
+#include "generalDefine.h"
+
 #include <unistd.h>
 #include <chrono>
 #include <sstream>
 
 namespace common {
+std::string getSideString(side side_);
+
 int writeAll(int fd, uint8_t *buf, int len);
 
 int readAll(int fd, uint8_t *buf, int len);

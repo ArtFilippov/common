@@ -4,6 +4,8 @@ set(CMAKE_SYSTEM_NAME Generic)
 
 include(${CMAKE_PREFIX_PATH}/toolchain.cmake)
 
+include_directories(${CMAKE_PREFIX_PATH})
+
 project(COMMON CXX)
 
 set(include_dest "common")

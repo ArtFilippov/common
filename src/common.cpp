@@ -62,3 +62,16 @@ std::stringstream common::print(uint8_t *pac, int len) {
 
     return buf;
 }
+
+std::string common::getSideString(side side_) {
+    switch (side_) {
+    case SIDE1:
+        return "SIDE1";
+    case SIDE2:
+        return "SIDE2";
+    case SIDE_ALL:
+        return "SIDE_ALL";
+    default:
+        return "INVALID_SIDE";
+    }
+}
