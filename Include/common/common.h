@@ -1,12 +1,12 @@
 #pragma once
 
-#include "generalDefine.h"
-
 #include <unistd.h>
 #include <chrono>
 #include <sstream>
 
 namespace common {
+enum side { SIDE1 = 1, SIDE2 = 2, SIDE_ALL = 3 };
+
 std::string getSideString(side side_);
 
 int writeAll(int fd, uint8_t *buf, int len);
