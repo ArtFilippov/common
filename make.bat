@@ -8,6 +8,6 @@ if exist %~dp0\build\ (
     RD /S "%~dp0\build\"
 )
 
-cmake -B ./build -G "MinGW Makefiles" -DOS=arm -DCMAKE_PREFIX_PATH="%workspaceDirectory%"
-cmake --build ./build 
-cmake --install ./build --prefix %workspaceDirectory%
+cmake -B %~dp0/build -G "MinGW Makefiles" -DOS=arm -DCMAKE_PREFIX_PATH="%workspaceDirectory%"
+cmake --build %~dp0/build
+cmake --install %~dp0/build --prefix %workspaceDirectory%
