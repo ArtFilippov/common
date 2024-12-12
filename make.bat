@@ -4,8 +4,8 @@ if exist %workspaceDirectory%\common\ (
     RD /S "%workspaceDirectory%\common"
 )
 
-if exist %cd%\build\ (
-    RD /S "%cd%\build\"
+if exist %~dp0\build\ (
+    RD /S "%~dp0\build\"
 )
 
 cmake -B ./build -G "MinGW Makefiles" -DOS=arm -DCMAKE_PREFIX_PATH="%workspaceDirectory%"
