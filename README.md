@@ -2,7 +2,7 @@
 ## сборка
 
 1. Клонировать репозиторий
-2. В командной строке выполнить `make.bat`, указав путь к глобальной рабочей директории (в ней должен находиться toolchain.cmake)
+2. В командной строке выполнить `make.bat`, указав путь к глобальной рабочей директории (в ней должен находиться [toolchain.cmake](https://gitea/filippar/liftbiom-general/src/branch/main/toolchain.cmake))
 ```
 make.bat C:\path\to\workspace
 ```
