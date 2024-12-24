@@ -103,7 +103,7 @@ std::string common::replace(const std::string &original, const std::string &old,
     size_t pos = original.find(old, begin);
 
     while (pos != std::string::npos) {
-        newString += original.substr(begin, pos) + new_;
+        newString += original.substr(begin, pos - begin) + new_;
 
         begin = pos + old.size();
 
