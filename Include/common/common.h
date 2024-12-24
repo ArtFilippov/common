@@ -25,7 +25,7 @@ std::stringstream print(uint8_t *pac, int len);
 
 uint64_t timeMs();
 
-std::string replace(const std::string &original, std::string &old, const std::string &new_);
+std::string replace(const std::string &original, const std::string &old, const std::string &new_);
 
 template <typename Int> void setBigEndian(uint8_t *pac, Int x) {
     for (int i = sizeof(x) - 1; i >= 0; --i) {

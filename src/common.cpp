@@ -94,7 +94,7 @@ common::direction common::mapStringToDirection(std::string str) {
     return direction::DOWN;
 }
 
-std::string common::replace(const std::string &original, std::string &old, const std::string &new_) {
+std::string common::replace(const std::string &original, const std::string &old, const std::string &new_) {
 
     std::string newString = "";
 
