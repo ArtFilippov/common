@@ -6,8 +6,13 @@
 
 namespace common {
 enum side { SIDE1 = 1, SIDE2 = 2, SIDE_ALL = 3 };
+enum direction { UP = 1, DOWN = 2, NONE = 0 };
 
 std::string getSideString(side side_);
+
+side mapStringToSide(std::string side_);
+
+direction mapStringToDirection(std::string str);
 
 int writeAll(int fd, uint8_t *buf, int len);
 
@@ -19,6 +24,8 @@ int readUntil(int fd, uint8_t *buf, int len, uint64_t time);
 std::stringstream print(uint8_t *pac, int len);
 
 uint64_t timeMs();
+
+std::string replace(const std::string &original, std::string &old, const std::string &new_);
 
 template <typename Int> void setBigEndian(uint8_t *pac, Int x) {
     for (int i = sizeof(x) - 1; i >= 0; --i) {
