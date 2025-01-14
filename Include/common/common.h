@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <chrono>
 #include <sstream>
+#include <fstream>
+#include <json/single_include/nlohmann/json.hpp>
 
 namespace common {
 enum side { SIDE1 = 1, SIDE2 = 2, SIDE_ALL = 3 };
@@ -72,4 +74,14 @@ template <typename Int> Int toGrayCode(Int x) {
 
     return ans;
 }
+
+class IConfigurator {
+  public:
+    virtual ~IConfigurator() = default;
+    virtual void configure(nlohmann::json config) = 0;
+    virtual void configureByFile(std::string configFile) {
+        std::ifstream config{configFile};
+        configure(nlohmann::json::parse(config));
+    }
+};
 } // namespace common
