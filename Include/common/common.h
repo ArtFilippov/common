@@ -78,10 +78,6 @@ template <typename Int> Int toGrayCode(Int x) {
 class IConfigurator {
   public:
     virtual ~IConfigurator() = default;
-    virtual void configure(nlohmann::json config) = 0;
-    virtual void configureByFile(std::string configFile) {
-        std::ifstream config{configFile};
-        configure(nlohmann::json::parse(config));
-    }
+    virtual void configure(const nlohmann::json &config) = 0;
 };
 } // namespace common
