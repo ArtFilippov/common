@@ -1,5 +1,25 @@
 #include "common/common.h"
 
+std::string common::getPathByFd(int fd) {
+    const int bufSize = 256;
+
+    std::string path = "/proc/self/fd/" + std::to_string(fileno(stdout));
+    char *device = new char[bufSize];
+    int res = readlink(path.c_str(), device, bufSize);
+
+    if (res == -1) {
+        throw std::runtime_error{"readlink error"};
+    }
+
+    device[res] = 0;
+
+    std::string ans{device};
+
+    delete[] device;
+
+    return ans;
+}
+
 int common::writeAll(int fd, uint8_t *buf, int len) {
     int total = 0;
     int n{};
@@ -52,13 +72,13 @@ uint64_t common::timeMs() {
         .count();
 }
 
-std::stringstream common::print(uint8_t *pac, int len) {
+std::stringstream common::print(const uint8_t *pac, int len) {
     std::stringstream buf;
     buf << "[" << std::hex;
-    for (int i = 0; i < len - 1; ++i) {
+    for (int i = 0; i < len; ++i) {
         buf << "0x" << (int) pac[i] << ", ";
     }
-    buf << "0x" << (int) pac[len - 1] << "]";
+    buf << "]";
 
     return buf;
 }
@@ -74,24 +94,6 @@ std::string common::getSideString(side side_) {
     default:
         return "INVALID_SIDE";
     }
-}
-
-common::side common::mapStringToSide(std::string side_) {
-    if (side_ == "Side1") {
-        return SIDE1;
-    } else if (side_ == "Side2") {
-        return SIDE2;
-    } else {
-        return SIDE_ALL;
-    }
-}
-
-common::direction common::mapStringToDirection(std::string str) {
-    if (str == "Up") {
-        return direction::UP;
-    }
-
-    return direction::DOWN;
 }
 
 std::string common::replace(const std::string &original, const std::string &old, const std::string &new_) {
@@ -113,4 +115,37 @@ std::string common::replace(const std::string &original, const std::string &old,
     newString += original.substr(begin);
 
     return newString;
+}
+
+uint16_t common::crc16(const unsigned char *buf, unsigned int len) {
+    static const uint16_t table[2] = {0x0000, 0xA001};
+    uint16_t crc = 0xFFFF;
+    unsigned int i = 0;
+    char bit = 0;
+    unsigned int x = 0;
+
+    for (i = 0; i < len; i++) {
+        crc ^= buf[i];
+
+        for (bit = 0; bit < 8; bit++) {
+            x = crc & 0x01;
+            crc >>= 1;
+            crc ^= table[x];
+        }
+    }
+    return crc;
+}
+
+uint16_t common::addCrc(uint16_t crc, uint8_t byte) {
+    uint16_t table[2] = {0x0000, 0xA001};
+
+    crc ^= byte;
+
+    for (int bit = 0; bit < 8; bit++) {
+        uint16_t x = crc & 0x01;
+        crc >>= 1;
+        crc ^= table[x];
+    }
+
+    return crc;
 }

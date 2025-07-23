@@ -1,5 +1,5 @@
 set(header_path ${COMMON_SOURCE_DIR}/include/common)
-set(header ${header_path}/common.h)
+set(header ${header_path}/common.h ${header_path}/common_templates.h)
 set(src common.cpp)
 
 add_library(common ${header} ${src})
