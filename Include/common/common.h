@@ -33,9 +33,52 @@ uint16_t crc16(const unsigned char *buf, unsigned int len);
 
 uint16_t addCrc(uint16_t crc, uint8_t byte);
 
+struct Buffer {
+    std::vector<uint8_t> data;
+    int size{0};
+
+    Buffer(int capacity);
+};
+
 class IConfigurator {
   public:
     virtual ~IConfigurator() = default;
     virtual void configure(const nlohmann::json &config) = 0;
+};
+
+class Anchor {
+    std::shared_ptr<lockable<bool>> anchored;
+
+  public:
+    class Hook {
+        friend class Anchor;
+
+        std::shared_ptr<lockable<bool>> anchored;
+
+        Hook(std::shared_ptr<lockable<bool>> anchored) : anchored(anchored) {}
+
+      public:
+        Hook(const Hook &other) : anchored(other.anchored) {}
+
+        const Hook &operator=(Hook other) {
+            anchored.swap(other.anchored);
+
+            return *this;
+        }
+
+        operator bool() const { return *anchored->lock(); }
+    };
+
+    Anchor() : anchored(common::make_lockable_ptr<bool>(true)) {}
+
+    Anchor(const Anchor &) = delete;
+
+    Anchor(const Anchor &&other) = delete;
+
+    ~Anchor() { release(); }
+
+    Hook hook() { return Hook(anchored); }
+
+    void release() { anchored->store(new bool{false}); }
 };
 } // namespace common

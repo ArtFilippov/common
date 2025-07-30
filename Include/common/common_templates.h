@@ -126,7 +126,7 @@ template <typename T> class lockable {
 
     virtual std::shared_ptr<const T> lock() = 0;
 
-    virtual void store(std::shared_ptr<T> inst) = 0;
+    virtual void store(std::shared_ptr<const T> inst) = 0;
 };
 
 template <typename T> class lockable_ptr : public lockable<T> {
@@ -138,20 +138,20 @@ template <typename T> class lockable_ptr : public lockable<T> {
 
     std::shared_ptr<const T> lock() override { return p.load(std::memory_order_acquire); }
 
-    void store(std::shared_ptr<T> newPtr) override {
+    void store(std::shared_ptr<const T> newPtr) override {
         p.store(common::no_null_ptr(newPtr)->point(), std::memory_order_release);
     }
 };
 
 template <typename T> class lockfree_ptr : public lockable<T> {
 
-    std::shared_ptr<T> inst1;
-    std::shared_ptr<T> inst2;
-    std::atomic<std::shared_ptr<T> *> switchTo;
+    std::shared_ptr<const T> inst1;
+    std::shared_ptr<const T> inst2;
+    std::atomic<std::shared_ptr<const T> *> switchTo;
     std::atomic<int> calls{0};
     std::atomic<int> storeCalls{0};
 
-    std::atomic<std::shared_ptr<T> *> p;
+    std::atomic<std::shared_ptr<const T> *> p;
     std::atomic_bool rightToModifyInsts{true};
 
   public:
@@ -162,13 +162,13 @@ template <typename T> class lockfree_ptr : public lockable<T> {
 
     std::shared_ptr<const T> lock() override {
         calls.fetch_add(1, std::memory_order_acq_rel);
-        std::shared_ptr<T> *myPtr = p.load(std::memory_order_acquire);
-        std::shared_ptr<T> result = std::shared_ptr<T>(*myPtr);
+        std::shared_ptr<const T> *myPtr = p.load(std::memory_order_acquire);
+        std::shared_ptr<const T> result = *myPtr;
         lastCallUpdateInstPtr();
         return result;
     }
 
-    void store(std::shared_ptr<T> newPtr) override {
+    void store(std::shared_ptr<const T> newPtr) override {
         calls.fetch_add(1, std::memory_order_acq_rel);
         storeCalls.fetch_add(1, std::memory_order_acq_rel);
 
@@ -184,14 +184,14 @@ template <typename T> class lockfree_ptr : public lockable<T> {
 
   private:
     void lastCallUpdateInstPtr() {
-        std::shared_ptr<T> *switchFrom = (switchTo.load(std::memory_order_acquire) == &inst1) ? &inst2 : &inst1;
+        std::shared_ptr<const T> *switchFrom = (switchTo.load(std::memory_order_acquire) == &inst1) ? &inst2 : &inst1;
         if (calls.fetch_sub(1, std::memory_order_acq_rel) == 1) {
             p.compare_exchange_strong(switchFrom, switchTo.load(std::memory_order_acquire), std::memory_order_acq_rel,
                                       std::memory_order_relaxed);
         }
     }
 
-    void lastStoreCallUpdateInst(std::shared_ptr<T> newPtr) {
+    void lastStoreCallUpdateInst(std::shared_ptr<const T> newPtr) {
         if (storeCalls.fetch_sub(1, std::memory_order_acq_rel) == 1) {
             bool rightToModify = true;
             if (rightToModifyInsts.compare_exchange_strong(rightToModify, false, std::memory_order_acq_rel,

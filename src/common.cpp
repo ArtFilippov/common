@@ -1,4 +1,11 @@
 #include "common/common.h"
+#include "common/common_templates.h"
+
+common::Buffer::Buffer(int capacity) {
+    for (int i = 0; i < capacity; ++i) {
+        data.push_back(0);
+    }
+}
 
 std::string common::getPathByFd(int fd) {
     const int bufSize = 256;
