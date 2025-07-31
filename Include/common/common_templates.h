@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 
+#define snew std::make_shared
 namespace common {
 template <typename T> class array_atomic {
     int size;

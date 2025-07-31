@@ -38,6 +38,8 @@ struct Buffer {
     int size{0};
 
     Buffer(int capacity);
+
+    const Buffer &operator+=(const Buffer &other);
 };
 
 class IConfigurator {

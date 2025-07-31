@@ -7,6 +7,13 @@ common::Buffer::Buffer(int capacity) {
     }
 }
 
+const common::Buffer &common::Buffer::operator+=(const common::Buffer &other) {
+    data.insert(data.end(), other.data.begin(), other.data.begin() + other.size);
+    size += other.size;
+
+    return *this;
+}
+
 std::string common::getPathByFd(int fd) {
     const int bufSize = 256;
 
