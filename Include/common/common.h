@@ -33,15 +33,6 @@ uint16_t crc16(const unsigned char *buf, unsigned int len);
 
 uint16_t addCrc(uint16_t crc, uint8_t byte);
 
-struct Buffer {
-    std::vector<uint8_t> data;
-    int size{0};
-
-    Buffer(int capacity);
-
-    const Buffer &operator+=(const Buffer &other);
-};
-
 class IConfigurator {
   public:
     virtual ~IConfigurator() = default;

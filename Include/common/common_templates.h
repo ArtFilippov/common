@@ -61,6 +61,17 @@ template <typename Int> Int getLittleEndian(uint8_t *pac) {
     return ans;
 }
 
+template <typename Int> Int reverseBytes(Int x) {
+    Int ans = 0;
+    for (int i = 0; i < sizeof(ans); ++i) {
+        ans <<= __CHAR_BIT__;
+        ans += x & 0xFF;
+        x >>= __CHAR_BIT__;
+    }
+
+    return ans;
+}
+
 template <typename Int> Int toGrayCode(Int x) {
     Int ans = 0;
     for (int i = 0; i < sizeof(x); ++i) {
@@ -121,13 +132,14 @@ template <typename T> class lockable {
   public:
     virtual ~lockable() = default;
 
-    void store(no_null_ptr<std::shared_ptr<T>> ptr) { store(ptr.point()); }
+    void store(no_null_ptr<std::shared_ptr<T>> ptr) { storeNoNull(ptr.point()); }
 
-    void store(const T *ptr) { store(std::make_shared<const T>(no_null_ptr<const T *>(ptr).point())); }
+    void store(const T *ptr) { storeNoNull(std::make_shared<const T>(no_null_ptr<const T *>(ptr).point())); }
 
     virtual std::shared_ptr<const T> lock() = 0;
 
-    virtual void store(std::shared_ptr<const T> inst) = 0;
+  private:
+    virtual void storeNoNull(std::shared_ptr<const T> inst) = 0;
 };
 
 template <typename T> class lockable_ptr : public lockable<T> {
@@ -139,7 +151,8 @@ template <typename T> class lockable_ptr : public lockable<T> {
 
     std::shared_ptr<const T> lock() override { return p.load(std::memory_order_acquire); }
 
-    void store(std::shared_ptr<const T> newPtr) override {
+  private:
+    void storeNoNull(std::shared_ptr<const T> newPtr) override {
         p.store(common::no_null_ptr(newPtr)->point(), std::memory_order_release);
     }
 };
@@ -169,7 +182,8 @@ template <typename T> class lockfree_ptr : public lockable<T> {
         return result;
     }
 
-    void store(std::shared_ptr<const T> newPtr) override {
+  private:
+    void storeNoNull(std::shared_ptr<const T> newPtr) override {
         calls.fetch_add(1, std::memory_order_acq_rel);
         storeCalls.fetch_add(1, std::memory_order_acq_rel);
 
@@ -183,7 +197,6 @@ template <typename T> class lockfree_ptr : public lockable<T> {
         lastCallUpdateInstPtr();
     }
 
-  private:
     void lastCallUpdateInstPtr() {
         std::shared_ptr<const T> *switchFrom = (switchTo.load(std::memory_order_acquire) == &inst1) ? &inst2 : &inst1;
         if (calls.fetch_sub(1, std::memory_order_acq_rel) == 1) {

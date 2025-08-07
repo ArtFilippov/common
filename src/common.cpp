@@ -1,19 +1,6 @@
 #include "common/common.h"
 #include "common/common_templates.h"
 
-common::Buffer::Buffer(int capacity) {
-    for (int i = 0; i < capacity; ++i) {
-        data.push_back(0);
-    }
-}
-
-const common::Buffer &common::Buffer::operator+=(const common::Buffer &other) {
-    data.insert(data.end(), other.data.begin(), other.data.begin() + other.size);
-    size += other.size;
-
-    return *this;
-}
-
 std::string common::getPathByFd(int fd) {
     const int bufSize = 256;
 
