@@ -40,15 +40,15 @@ class IConfigurator {
 };
 
 class Anchor {
-    std::shared_ptr<lockable<bool>> anchored;
+    std::shared_ptr<std::atomic_bool> anchored;
 
   public:
     class Hook {
         friend class Anchor;
 
-        std::shared_ptr<lockable<bool>> anchored;
+        std::shared_ptr<std::atomic_bool> anchored;
 
-        Hook(std::shared_ptr<lockable<bool>> anchored) : anchored(anchored) {}
+        Hook(std::shared_ptr<std::atomic_bool> anchored) : anchored(anchored) {}
 
       public:
         Hook(const Hook &other) : anchored(other.anchored) {}
@@ -59,10 +59,10 @@ class Anchor {
             return *this;
         }
 
-        operator bool() const { return *anchored->lock(); }
+        operator bool() const { return anchored->load(std::memory_order::acquire); }
     };
 
-    Anchor() : anchored(common::make_lockable_ptr<bool>(true)) {}
+    Anchor() : anchored(std::make_shared<std::atomic_bool>(true)) {}
 
     Anchor(const Anchor &) = delete;
 
@@ -72,6 +72,6 @@ class Anchor {
 
     Hook hook() { return Hook(anchored); }
 
-    void release() { anchored->store(new bool{false}); }
+    void release() { anchored->store(false, std::memory_order::release); }
 };
 } // namespace common
