@@ -23,7 +23,7 @@ int readAll(int fd, uint8_t *buf, int len);
 // NOTE: работает только на неблокирующих дескрипторах
 int readUntil(int fd, uint8_t *buf, int len, uint64_t time);
 
-std::stringstream print(const uint8_t *pac, int len);
+std::stringstream print(const uint8_t *pac, std::size_t len);
 
 uint64_t timeMs();
 

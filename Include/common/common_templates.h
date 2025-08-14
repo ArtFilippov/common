@@ -223,6 +223,6 @@ template <typename _Tp, typename... _Args> inline std::shared_ptr<lockable<_Tp>>
     no_null_ptr<std::shared_ptr<_Tp>> nnp = no_null_ptr(ptr);
 
     return std::make_shared<lockfree_ptr<_Tp>>(nnp);
-};
+}
 
 } // namespace common

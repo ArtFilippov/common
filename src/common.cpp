@@ -4,7 +4,7 @@
 std::string common::getPathByFd(int fd) {
     const int bufSize = 256;
 
-    std::string path = "/proc/self/fd/" + std::to_string(fileno(stdout));
+    std::string path = "/proc/self/fd/" + std::to_string(fd);
     char *device = new char[bufSize];
     int res = readlink(path.c_str(), device, bufSize);
 
@@ -26,7 +26,7 @@ int common::writeAll(int fd, uint8_t *buf, int len) {
     int n{};
 
     while (total < len) {
-        n = write(fd, buf + total, len - total);
+        n = write(fd, buf + total, static_cast<std::size_t>(len - total));
         if (n == -1 || n == 0) {
             break;
         }
@@ -41,7 +41,7 @@ int common::readAll(int fd, uint8_t *buf, int len) {
     int n{};
 
     while (total < len) {
-        n = read(fd, buf + total, len - total);
+        n = read(fd, buf + total, static_cast<std::size_t>(len - total));
         if (n == -1 || n == 0) {
             break;
         }
@@ -55,10 +55,8 @@ int common::readUntil(int fd, uint8_t *buf, int len, uint64_t time) {
     int total = 0;
     int n{};
 
-    while (total < len &&
-           std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
-                   .count() < time) {
-        n = read(fd, buf + total, len - total);
+    while (total < len && common::timeMs() < time) {
+        n = read(fd, buf + total, static_cast<std::size_t>(len - total));
         if (n == -1) {
             break;
         }
@@ -69,15 +67,16 @@ int common::readUntil(int fd, uint8_t *buf, int len, uint64_t time) {
 }
 
 uint64_t common::timeMs() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
-        .count();
+    return static_cast<std::size_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
+            .count());
 }
 
-std::stringstream common::print(const uint8_t *pac, int len) {
+std::stringstream common::print(const uint8_t *pac, std::size_t len) {
     std::stringstream buf;
     buf << "[" << std::hex;
-    for (int i = 0; i < len; ++i) {
-        buf << "0x" << (int) pac[i] << ", ";
+    for (std::size_t i = 0; i < len; ++i) {
+        buf << "0x" << static_cast<uint32_t>(pac[i]) << ", ";
     }
     buf << "]";
 
