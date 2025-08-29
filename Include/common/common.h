@@ -29,6 +29,10 @@ uint64_t timeMs();
 
 std::string replace(const std::string &original, const std::string &old, const std::string &new_);
 
+std::size_t linesOf(const std::string &str);
+
+std::optional<int> stoi(const std::string &str, int base = 10);
+
 uint16_t crc16(const unsigned char *buf, unsigned int len);
 
 uint16_t addCrc(uint16_t crc, uint8_t byte);

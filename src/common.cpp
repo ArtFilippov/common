@@ -1,5 +1,6 @@
 #include "common/common.h"
 #include "common/common_templates.h"
+#include <sstream>
 
 std::string common::getPathByFd(int fd) {
     const int bufSize = 256;
@@ -115,6 +116,24 @@ std::string common::replace(const std::string &original, const std::string &old,
     newString += original.substr(begin);
 
     return newString;
+}
+
+std::size_t common::linesOf(const std::string &str) {
+    std::size_t ans = 0;
+    std::istringstream iss{str};
+    std::string line;
+    while (std::getline(iss, line)) {
+        ++ans;
+    }
+    return ans;
+}
+
+std::optional<int> common::stoi(const std::string &str, int base) {
+    try {
+        return std::stoi(str, nullptr, base);
+    } catch (...) {
+        return {};
+    }
 }
 
 uint16_t common::crc16(const unsigned char *buf, unsigned int len) {

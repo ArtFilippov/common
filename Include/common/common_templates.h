@@ -225,4 +225,10 @@ template <typename _Tp, typename... _Args> inline std::shared_ptr<lockable<_Tp>>
     return std::make_shared<lockfree_ptr<_Tp>>(nnp);
 }
 
+template <typename Int> std::size_t as_size(Int x) {
+    return static_cast<std::size_t>(static_cast<std::make_unsigned<Int>::type>(x));
+}
+
+template <typename Uint> auto as_signed(Uint x) { return static_cast<std::make_signed<Uint>::type>(x); }
+
 } // namespace common
