@@ -1,4 +1,4 @@
-set workspaceDirectory="C:\Users\filippar\sharedVbox"
+set workspaceDirectory=%~dp0..\..
 
 if exist %workspaceDirectory%\common\ (
     RD /S "%workspaceDirectory%\common"

@@ -76,6 +76,9 @@ class Anchor {
 
     Hook hook() { return Hook(anchored); }
 
-    void release() { anchored->store(false, std::memory_order::release); }
+    void release() {
+        anchored->store(false, std::memory_order::release);
+        anchored = std::make_shared<std::atomic_bool>(true);
+    }
 };
 } // namespace common

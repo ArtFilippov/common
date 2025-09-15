@@ -3,6 +3,7 @@
 #include <exception>
 #include <iostream>
 #include <memory>
+#include <concepts>
 
 #define snew std::make_shared
 namespace common {
@@ -36,7 +37,7 @@ template <typename Int> void setBigEndian(uint8_t *pac, Int x) {
 
 template <typename Int> Int getBigEndian(uint8_t *pac) {
     Int ans = 0;
-    for (int i = 0; i < sizeof(ans); ++i) {
+    for (std::size_t i = 0; i < sizeof(ans); ++i) {
         ans <<= __CHAR_BIT__;
         ans += pac[i];
     }
@@ -45,7 +46,7 @@ template <typename Int> Int getBigEndian(uint8_t *pac) {
 }
 
 template <typename Int> void setLittleEndian(uint8_t *pac, Int x) {
-    for (int i = 0; i < sizeof(x); ++i) {
+    for (std::size_t i = 0; i < sizeof(x); ++i) {
         pac[i] = x & 0xFF;
         x >>= __CHAR_BIT__;
     }
@@ -225,10 +226,14 @@ template <typename _Tp, typename... _Args> inline std::shared_ptr<lockable<_Tp>>
     return std::make_shared<lockfree_ptr<_Tp>>(nnp);
 }
 
-template <typename Int> std::size_t as_size(Int x) {
+template <std::integral Int> std::size_t as_size(Int x) {
     return static_cast<std::size_t>(static_cast<std::make_unsigned<Int>::type>(x));
 }
 
+template <std::floating_point Float> std::size_t as_size(Float x) { return static_cast<std::size_t>(x); }
+
 template <typename Uint> auto as_signed(Uint x) { return static_cast<std::make_signed<Uint>::type>(x); }
+
+template <std::floating_point Float> auto as_signed(Float x) { return static_cast<int64_t>(x); }
 
 } // namespace common
