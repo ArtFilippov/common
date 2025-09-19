@@ -35,7 +35,7 @@ template <typename Int> void setBigEndian(uint8_t *pac, Int x) {
     }
 }
 
-template <typename Int> Int getBigEndian(uint8_t *pac) {
+template <typename Int> Int getBigEndian(const uint8_t *pac) {
     Int ans = 0;
     for (std::size_t i = 0; i < sizeof(ans); ++i) {
         ans <<= __CHAR_BIT__;
@@ -52,7 +52,7 @@ template <typename Int> void setLittleEndian(uint8_t *pac, Int x) {
     }
 }
 
-template <typename Int> Int getLittleEndian(uint8_t *pac) {
+template <typename Int> Int getLittleEndian(const uint8_t *pac) {
     Int ans = 0;
     for (int i = sizeof(ans) - 1; i >= 0; --i) {
         ans <<= __CHAR_BIT__;
